@@ -22,7 +22,7 @@ public class Main {
                             c != '=' && c != '+' && c != '{' && c != '}' && c != '[' && c != ']' &&
                             c != '|' && c != '\\' && c != ':' && c != ';' && c != '"' && c != '\'' &&
                             c != '<' && c != '>' && c != ',' && c != '.' && c != '?' && c != '/' &&
-                            c != '~' && c != '`' && c!='á' && c!='ó' && c!='é') {
+                            c != '~' && c != '`' && c != 'á' && c != 'ó' && c != 'é') {
                         texto.append(c);
                     }
                 }
@@ -32,19 +32,34 @@ public class Main {
         }
 
         String resultado = texto.toString();
-        String [] palavrasSeparadas = resultado.split(" ");
+        String[] palavrasSeparadas = resultado.split(" ");
 
-        for (String palavra : palavrasSeparadas) {
+        String[] ocorrencias = new String[20];
+        int[] numOcorrencias = new int[20];
+        int index = 0;
+
+        for (int i = 0; i < palavrasSeparadas.length; i++) {
             int contadorLocal = 0;
-            for (String s : palavrasSeparadas) {
-                if (s.equals(palavra)) {
-                    contadorLocal++;
+
+            boolean jaContada = false;
+            for (int j = 0; j < i; j++) {
+                if (palavrasSeparadas[i].equals(palavrasSeparadas[j])) {
+                    jaContada = true;
+                    break;
                 }
             }
-            System.out.println(palavra + ": " + contadorLocal);
 
+            if (!jaContada) {
+                for (String palavra : palavrasSeparadas) {
+                    if (palavra.equals(palavrasSeparadas[i])) {
+                        contadorLocal++;
+                    }
+                }
+                ocorrencias[index] = palavrasSeparadas[i];
+                numOcorrencias[index] = contadorLocal;
+                index++;
+            }
         }
-
         System.out.println("Quantidade de palavras no texto: " + contador);
         System.out.println(resultado);
     }
