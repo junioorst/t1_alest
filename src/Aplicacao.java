@@ -11,8 +11,8 @@ public class Aplicacao {
         this.listaDinamica = new ListaDinamica();
     }
 
-    public void executar() throws FileNotFoundException {
-        Scanner sc = new Scanner(new File("C:\\Users\\Júnior\\trabalho_alest\\texto.txt"));
+    public void executar(String caminhoArquivo) throws FileNotFoundException {
+        Scanner sc = new Scanner(new File(caminhoArquivo));
         StringBuilder texto = new StringBuilder();
         int contador = 0;
         while (sc.hasNextLine()) {
@@ -43,56 +43,91 @@ public class Aplicacao {
 
 
     public void verificarOcorrencias(String[] palavrasSeparadas, int quantidadePalavras) {
-        String[] ocorrencias = new String[quantidadePalavras];
-        int[] numOcorrencias = new int[quantidadePalavras];
-        int index = 0;
+        String[] palavrasUnicas = new String[quantidadePalavras];
+        int[] contadores = new int[quantidadePalavras];
+        int tamanho = 0;
 
         for (int i = 0; i < palavrasSeparadas.length; i++) {
-            int contadorLocal = 0;
+            String palavra = palavrasSeparadas[i].toLowerCase();
 
-            boolean jaContada = false;
-            for (int j = 0; j < i; j++) {
-                if (palavrasSeparadas[i].equals(palavrasSeparadas[j].toLowerCase())) {
-                    jaContada = true;
-                    break;
-                }
-            }
-
-            if (!jaContada) {
-                for (String palavra : palavrasSeparadas) {
-                    if (palavra.equals(palavrasSeparadas[i].toLowerCase())) {
-                        contadorLocal++;
+            if (!palavra.isEmpty()) {
+                boolean achou = false;
+                for (int j = 0; j < tamanho; j++) {
+                    if (palavrasUnicas[j].equals(palavra)) {
+                        contadores[j]++;
+                        achou = true;
+                        break;
                     }
                 }
-                if (!palavrasSeparadas[i].isEmpty()) {
-                    ocorrencias[index] = palavrasSeparadas[i];
-                    numOcorrencias[index] = contadorLocal;
-                    index++;
+
+                if (!achou) {
+                    palavrasUnicas[tamanho] = palavra;
+                    contadores[tamanho] = 1;
+                    tamanho++;
                 }
             }
         }
 
-        int tamanho = ocorrencias.length;
-        int contadorAdicionados = 0;
+        mergeSort(palavrasUnicas, contadores, 0, tamanho - 1);
+
         int limite = 20;
-        for (int i = 0; i < tamanho; i++) {
-            for (int j = 0; j < tamanho - 1 - i; j++) {
-                if (numOcorrencias[j] < numOcorrencias[j + 1]) {
-                    int temp = numOcorrencias[j];
-                    numOcorrencias[j] = numOcorrencias[j + 1];
-                    numOcorrencias[j + 1] = temp;
-
-                    String tempp = ocorrencias[j];
-                    ocorrencias[j] = ocorrencias[j + 1];
-                    ocorrencias[j + 1] = tempp;
-                }
-            }
+        for (int i = 0; i < tamanho && i < limite; i++) {
+            listaEstatica.adiciona(palavrasUnicas[i], contadores[i]);
         }
+    }
 
-        for (int i = 0; i < tamanho && contadorAdicionados < limite; i++) {
-            if (ocorrencias[i] != null && numOcorrencias[i] != 0) {
-                listaEstatica.adiciona(ocorrencias[i], numOcorrencias[i]);
-                contadorAdicionados++;
+    public void mergeSort(String[] palavras, int[] contadores, int inicio, int fim) {
+        if (inicio < fim) {
+            int meio = (inicio + fim) / 2;
+
+            mergeSort(palavras, contadores, inicio, meio);
+            mergeSort(palavras, contadores, meio + 1, fim);
+
+            int tamanhoEsq = meio - inicio + 1;
+            int tamanhoDir = fim - meio;
+
+            String[] esqPalavras = new String[tamanhoEsq];
+            int[] esqContadores = new int[tamanhoEsq];
+            String[] dirPalavras = new String[tamanhoDir];
+            int[] dirContadores = new int[tamanhoDir];
+
+            for (int i = 0; i < tamanhoEsq; i++) {
+                esqPalavras[i] = palavras[inicio + i];
+                esqContadores[i] = contadores[inicio + i];
+            }
+
+            for (int j = 0; j < tamanhoDir; j++) {
+                dirPalavras[j] = palavras[meio + 1 + j];
+                dirContadores[j] = contadores[meio + 1 + j];
+            }
+
+            int i = 0, j = 0, k = inicio;
+
+            while (i < tamanhoEsq && j < tamanhoDir) {
+                if (esqContadores[i] >= dirContadores[j]) {
+                    palavras[k] = esqPalavras[i];
+                    contadores[k] = esqContadores[i];
+                    i++;
+                } else {
+                    palavras[k] = dirPalavras[j];
+                    contadores[k] = dirContadores[j];
+                    j++;
+                }
+                k++;
+            }
+
+            while (i < tamanhoEsq) {
+                palavras[k] = esqPalavras[i];
+                contadores[k] = esqContadores[i];
+                i++;
+                k++;
+            }
+
+            while (j < tamanhoDir) {
+                palavras[k] = dirPalavras[j];
+                contadores[k] = dirContadores[j];
+                j++;
+                k++;
             }
         }
     }

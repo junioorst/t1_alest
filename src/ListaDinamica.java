@@ -16,7 +16,7 @@ public class ListaDinamica {
 
         if (inicio == null) {
             inicio = novo;
-        } else {
+        } else if (!consultar(palavra)) {
             Nodo atual = inicio;
             while (atual.proximo != null) {
                 atual = atual.proximo;
@@ -35,5 +35,17 @@ public class ListaDinamica {
                 atual = atual.proximo;
             }
         }
+    }
+
+    public boolean consultar(String palavra) {
+        Nodo atual = inicio;
+        while (atual != null) {
+            if (atual.palavra.equals(palavra)) {
+                return true;
+            } else {
+                atual = atual.proximo;
+            }
+        }
+        return false;
     }
 }
