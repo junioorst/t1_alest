@@ -18,7 +18,7 @@ public class ListaEstatica {
     public void exibir() {
         for (int i = 0; i < listaOcorrencias.length; i++) {
             if (listaOcorrencias[i] != null) {
-                System.out.println(listaOcorrencias[i]);
+                System.out.println((i+1) + ". " + listaOcorrencias[i]);
             }
         }
     }

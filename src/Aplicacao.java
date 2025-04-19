@@ -19,28 +19,19 @@ public class Aplicacao {
             String linha = sc.nextLine();
             String[] palavras = linha.split(" ");
 
-            for (String words : palavras) {
-                for (int i = 0; i < words.length(); i++) {
-                    char c = words.charAt(i);
-                    if (c != '!' && c != '@' && c != '#' && c != '$' && c != '%' && c != '^' &&
-                            c != '&' && c != '*' && c != '(' && c != ')' && c != '-' && c != '_' &&
-                            c != '=' && c != '+' && c != '{' && c != '}' && c != '[' && c != ']' &&
-                            c != '|' && c != '\\' && c != ':' && c != ';' && c != '"' && c != '\'' &&
-                            c != '<' && c != '>' && c != ',' && c != '.' && c != '?' && c != '/' &&
-                            c != '~' && c != '`' && c != 'á' && c != 'ó' && c != 'é') {
-                        texto.append(c);
-                    }
-                }
-                texto.append(" ");
+            for (String word : palavras) {
+                word = word.replaceAll("[^a-zA-Z]", "");
+                texto.append(word.toLowerCase()).append(" ");
                 contador++;
             }
         }
         String resultado = texto.toString();
-        String[] palavrasSeparadas = resultado.split("\\s+");
+        String[] palavrasSeparadas = resultado.split(" ");
+
 
         System.out.println("Total de palavras do texto: " + contador);
 
-        verificarOcorrencias(palavrasSeparadas);
+        verificarOcorrencias(palavrasSeparadas, contador);
         System.out.println("\nTop 20 palavras com mais ocorrências: ");
         listaEstatica.exibir();
 
@@ -51,18 +42,17 @@ public class Aplicacao {
     }
 
 
-    public void verificarOcorrencias(String[] palavrasSeparadas) {
-        String[] ocorrencias = new String[100];
-        int[] numOcorrencias = new int[100];
+    public void verificarOcorrencias(String[] palavrasSeparadas, int quantidadePalavras) {
+        String[] ocorrencias = new String[quantidadePalavras];
+        int[] numOcorrencias = new int[quantidadePalavras];
         int index = 0;
 
         for (int i = 0; i < palavrasSeparadas.length; i++) {
             int contadorLocal = 0;
 
-            String palavraMinuscula = palavrasSeparadas[i].toLowerCase();
             boolean jaContada = false;
             for (int j = 0; j < i; j++) {
-                if (palavraMinuscula.equals(palavrasSeparadas[j].toLowerCase())) {
+                if (palavrasSeparadas[i].equals(palavrasSeparadas[j].toLowerCase())) {
                     jaContada = true;
                     break;
                 }
@@ -70,8 +60,7 @@ public class Aplicacao {
 
             if (!jaContada) {
                 for (String palavra : palavrasSeparadas) {
-                    String minuscula = palavra.toLowerCase();
-                    if (minuscula.equals(palavrasSeparadas[i].toLowerCase())) {
+                    if (palavra.equals(palavrasSeparadas[i].toLowerCase())) {
                         contadorLocal++;
                     }
                 }
@@ -84,6 +73,8 @@ public class Aplicacao {
         }
 
         int tamanho = ocorrencias.length;
+        int contadorAdicionados = 0;
+        int limite = 20;
         for (int i = 0; i < tamanho; i++) {
             for (int j = 0; j < tamanho - 1 - i; j++) {
                 if (numOcorrencias[j] < numOcorrencias[j + 1]) {
@@ -98,9 +89,10 @@ public class Aplicacao {
             }
         }
 
-        for (int i = 0; i < tamanho; i++) {
+        for (int i = 0; i < tamanho && contadorAdicionados < limite; i++) {
             if (ocorrencias[i] != null && numOcorrencias[i] != 0) {
                 listaEstatica.adiciona(ocorrencias[i], numOcorrencias[i]);
+                contadorAdicionados++;
             }
         }
     }
