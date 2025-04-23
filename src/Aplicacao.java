@@ -28,7 +28,7 @@ public class Aplicacao {
         String resultado = texto.toString();
         String[] palavrasSeparadas = resultado.split(" ");
 
-
+        System.out.println("Caso de teste: Drácula");
         System.out.println("Total de palavras do texto: " + contador);
 
         verificarOcorrencias(palavrasSeparadas, contador);
